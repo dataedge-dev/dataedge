@@ -6,16 +6,16 @@
   ================================================= */
 
   /* Fundo: Azul “Midnight Ink” (tecnologia + luxo) */
-  --color-background: #03070d; /* + escuro, neutraliza o glow */
+  --color-background: #03070d; 
 
   /* Texto: Champagne Soft (mais fino que o creme) */
-  --color-foreground: #faf3e7; /* menos saturado, mais caro visualmente */
+  --color-foreground: #faf3e7; 
 
   /* Primária: GREEN-TEAL "Aurora Emerald" (premium + luminoso) */
   --color-primary: #00a6b5;
   --color-primary-foreground: #ffffff;
 
-  /* Secundária: Violet Neon (não infantil — tom tecnológico) */
+  /* Secundária: Violet Neon (tom tecnológico) */
   --color-secondary: #b58cff;
   --color-secondary-foreground: #0b041a;
 
@@ -33,6 +33,7 @@
 
   /* Animações */
   --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 
   @keyframes float {
     0%, 100% { transform: translateY(0); }
@@ -40,9 +41,9 @@
   }
 }
 
-/* ====================== UTILITÁRIOS ====================== */
+/* ====================== UTILITÁRIOS CUSTOMIZADOS ====================== */
+
 @utility bg-hero-glow {
-  /* Glow tech elegante (mistura teal + violeta) */
   background-image: radial-gradient(
     circle at 50% 50%,
     rgba(0, 166, 181, 0.22) 0%,
@@ -57,12 +58,40 @@
     linear-gradient(to bottom, rgba(255,255,255,0.045) 1px, transparent 1px);
 }
 
+/* --- PACOTE DE PERFORMANCE (Nova Adição) --- */
+@layer utilities {
+  .gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+    will-change: transform, opacity;
+  }
+}
+
+/* ====================== ESTILOS BASE ====================== */
 @layer base {
   html {
     @apply scroll-smooth;
-    scroll-padding-top: 100px; /* <--- Compensação para a Navbar fixa */
+    scroll-padding-top: 100px; /* Compensação para a Navbar fixa */
   }
+  
   body {
     @apply bg-background text-foreground antialiased selection:bg-secondary selection:text-black;
+  }
+
+  /* Estilização da Barra de Rolagem (Scrollbar) */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #02050a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 5px;
+    border: 2px solid #02050a;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #00a6b5; /* Teal no hover */
   }
 }
