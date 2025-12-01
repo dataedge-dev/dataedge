@@ -1,7 +1,6 @@
 import React, { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useWillChange } from "framer-motion"; // Importei useWillChange
 
-// Variáveis de animação para o texto (entrada suave)
 const textVariants = {
   hidden: { opacity: 0, y: 30 },
   visible: (delay = 0) => ({
@@ -13,12 +12,14 @@ const textVariants = {
 
 export const Hero = () => {
   const ref = useRef(null);
+  // Dica de performance: will-change avisa o navegador que vai mudar
+  const willChange = useWillChange(); 
+  
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
 
-  // Efeito sutil de parallax no background e no texto ao rolar
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const textY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
 
@@ -31,17 +32,16 @@ export const Hero = () => {
     >
       {/* --- Background Animation --- */}
       <motion.div
-        className="absolute inset-0 z-0"
-        style={{ y: backgroundY }}
+        className="absolute inset-0 z-0 gpu-accelerated" // Add classe GPU
+        style={{ y: backgroundY, willChange }} 
       >
         {/* Gradiente de fundo */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(17,24,39,1)_0%,rgba(3,7,18,1)_100%)]"></div>
         
-        {/* Luzes difusas de fundo */}
-        <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-cyan-600/20 rounded-full filter blur-[120px] animate-pulse-slow"></div>
-        <div className="absolute bottom-1/4 right-1/3 w-96 h-96 bg-purple-600/10 rounded-full filter blur-[120px] animate-pulse-slow animation-delay-2000"></div>
+        {/* Luzes difusas - Reduzi um pouco o blur excessivo para performance */}
+        <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-cyan-600/10 rounded-full filter blur-[80px] animate-pulse-slow gpu-accelerated"></div>
+        <div className="absolute bottom-1/4 right-1/3 w-96 h-96 bg-purple-600/10 rounded-full filter blur-[80px] animate-pulse-slow animation-delay-2000 gpu-accelerated"></div>
 
-        {/* A Rede Neural Fluida (SVG Animado) */}
         <svg
           className="absolute inset-0 w-full h-full opacity-50"
           xmlns="http://www.w3.org/2000/svg"
@@ -54,8 +54,9 @@ export const Hero = () => {
               <stop offset="50%" stopColor="rgba(147, 51, 234, 0.4)" />
               <stop offset="100%" stopColor="rgba(6, 182, 212, 0.1)" />
             </linearGradient>
-             <filter id="glow">
-                <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+             {/* Filtro simplificado */}
+             <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="2" result="coloredBlur" />
                 <feMerge>
                     <feMergeNode in="coloredBlur" />
                     <feMergeNode in="SourceGraphic" />
@@ -63,26 +64,23 @@ export const Hero = () => {
             </filter>
           </defs>
 
-          {/* REMOVIDO: O Círculo Pulsante grande (r="40") que estava aqui foi apagado.
-             Mantive apenas o núcleo sólido abaixo.
-          */}
-
-           {/* Núcleo Sólido (A "Bola" central) */}
+           {/* Núcleo Sólido */}
            <motion.circle
             cx="50"
             cy="50"
-            r="15" // Reduzi um pouco (de 20 para 15) para ficar mais discreto atrás do texto
-            className="fill-cyan-100/10" // Deixei bem sutil (transparente)
+            r="15"
+            className="fill-cyan-100/5" // Opacidade reduzida via cor, mais leve que opacity
             filter="url(#glow)"
+            style={{ willChange }}
           />
 
           {/* Orbitais e Conexões */}
           {[0, 120, 240].map((angle, index) => (
             <motion.g key={index}>
-               {/* Ponto Orbital */}
               <motion.circle
                 r="1"
                 className="fill-purple-400/80"
+                style={{ willChange }} // Otimização crítica
                 animate={{
                   cx: [50, 50 + 30 * Math.cos(angle * Math.PI / 180), 50 + 30 * Math.cos((angle + 180) * Math.PI / 180), 50],
                   cy: [50, 50 + 15 * Math.sin(angle * Math.PI / 180), 50 + 30 * Math.sin((angle + 180) * Math.PI / 180), 50],
@@ -93,13 +91,13 @@ export const Hero = () => {
                   ease: "linear",
                 }}
               />
-              {/* Linha conectando o ponto orbital ao centro */}
               <motion.path
                  d={`M 50 50 L 50 50`} 
                  stroke="url(#lineGradient)"
                  strokeWidth="0.2"
                  strokeLinecap="round"
                  fill="none"
+                 style={{ willChange }} // Otimização crítica
                  animate={{
                     d: [
                         `M 50 50 L ${50 + 30 * Math.cos(angle * Math.PI / 180)} ${50 + 15 * Math.sin(angle * Math.PI / 180)}`,
@@ -113,10 +111,10 @@ export const Hero = () => {
                     ease: "linear",
                   }}
               />
-              {/* Partícula de dados fluindo na linha */}
               <motion.circle
                 r="0.8"
                 className="fill-white"
+                style={{ willChange }} // Otimização crítica
                 animate={{
                     cx: [50, 50 + 30 * Math.cos((angle + 180) * Math.PI / 180), 50],
                     cy: [50, 50 + 30 * Math.sin((angle + 180) * Math.PI / 180), 50]
@@ -131,14 +129,12 @@ export const Hero = () => {
             </motion.g>
           ))}
 
-          {/* Linhas de grade sutis */}
+          {/* Linhas de grade estáticas para economizar recurso */}
           <motion.path
             d="M 0 20 H 100 M 0 80 H 100 M 20 0 V 100 M 80 0 V 100"
             className="stroke-cyan-900/20"
             strokeWidth="0.1"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ duration: 2, ease: "easeInOut" }}
+            // Removi a animação de entrada do pathLength que pesava no início
           />
 
         </svg>
@@ -147,12 +143,12 @@ export const Hero = () => {
       {/* --- Content --- */}
       <div className="container mx-auto px-4 z-10 relative text-center">
         <motion.div
-          style={{ y: textY }}
+          style={{ y: textY, willChange }} // Otimização
           initial="hidden"
           animate="visible"
           className="max-w-4xl mx-auto"
         >
-          {/* Badge Superior */}
+          {/* Badge */}
           <motion.div
             variants={textVariants}
             custom={0}
@@ -167,7 +163,7 @@ export const Hero = () => {
             </span>
           </motion.div>
 
-          {/* Headline Principal */}
+          {/* Headline */}
           <motion.h1
             variants={textVariants}
             custom={0.2}
@@ -175,11 +171,11 @@ export const Hero = () => {
           >
             Transformamos Processos Caóticos em<br className="hidden md:block"/>{" "}
             
-            {/* Destaque do Texto */}
             <span className="relative inline-block mt-2">
-                <span className="absolute inset-0 blur-[35px] bg-cyan-500/20 rounded-full pointer-events-none" />
+                {/* Otimização: Reduzi o blur de 35px para 25px */}
+                <span className="absolute inset-0 blur-[25px] bg-cyan-500/20 rounded-full pointer-events-none" />
                 
-                <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-purple-400 drop-shadow-[0_0_25px_rgba(6,182,212,0.6)]">
+                <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-purple-400 drop-shadow-[0_0_15px_rgba(6,182,212,0.6)]">
                   Sistemas Web Inteligentes
                 </span>
 
@@ -206,7 +202,7 @@ export const Hero = () => {
             Colocamos ordem e inteligência no coração da sua operação.
           </motion.p>
 
-          {/* Botão CTA */}
+          {/* Botão */}
           <motion.div variants={textVariants} custom={0.6}>
             <a
               href="#contato"
@@ -222,12 +218,7 @@ export const Hero = () => {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </a>
              <p className="text-slate-500 text-sm mt-4">Analise seus processos sem compromisso.</p>
@@ -235,7 +226,6 @@ export const Hero = () => {
         </motion.div>
       </div>
 
-        {/* Indicador de Scroll */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: [0, 10, 0] }}
