@@ -25,20 +25,19 @@ export const Hero = () => {
   return (
     <section
       ref={ref}
-      // Adicionado style={{ position: "relative" }} para garantir que o Framer Motion não reclame
       style={{ position: "relative" }}
       className="min-h-[90vh] flex items-center justify-center overflow-hidden bg-[#030712] py-20"
       id="hero"
     >
-      {/* --- Background Animation: The Intelligent Network --- */}
+      {/* --- Background Animation --- */}
       <motion.div
         className="absolute inset-0 z-0"
         style={{ y: backgroundY }}
       >
-        {/* Gradiente de fundo para profundidade */}
+        {/* Gradiente de fundo */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(17,24,39,1)_0%,rgba(3,7,18,1)_100%)]"></div>
         
-        {/* Luzes difusas de fundo - Cores Ciano e Roxo */}
+        {/* Luzes difusas de fundo */}
         <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-cyan-600/20 rounded-full filter blur-[120px] animate-pulse-slow"></div>
         <div className="absolute bottom-1/4 right-1/3 w-96 h-96 bg-purple-600/10 rounded-full filter blur-[120px] animate-pulse-slow animation-delay-2000"></div>
 
@@ -46,18 +45,15 @@ export const Hero = () => {
         <svg
           className="absolute inset-0 w-full h-full opacity-50"
           xmlns="http://www.w3.org/2000/svg"
-          // IMPORTANTE: viewBox define coordenadas de 0 a 100 para evitar erros de % no path
           viewBox="0 0 100 100" 
           preserveAspectRatio="xMidYMid slice"
         >
           <defs>
-            {/* Gradiente para as linhas de conexão (Ciano para Roxo) */}
             <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="rgba(6, 182, 212, 0.1)" /> {/* Ciano */}
-              <stop offset="50%" stopColor="rgba(147, 51, 234, 0.4)" /> {/* Roxo */}
-              <stop offset="100%" stopColor="rgba(6, 182, 212, 0.1)" /> {/* Ciano */}
+              <stop offset="0%" stopColor="rgba(6, 182, 212, 0.1)" />
+              <stop offset="50%" stopColor="rgba(147, 51, 234, 0.4)" />
+              <stop offset="100%" stopColor="rgba(6, 182, 212, 0.1)" />
             </linearGradient>
-             {/* Filtro de brilho para o núcleo central */}
              <filter id="glow">
                 <feGaussianBlur stdDeviation="4" result="coloredBlur" />
                 <feMerge>
@@ -67,29 +63,16 @@ export const Hero = () => {
             </filter>
           </defs>
 
-          {/* Núcleo Central Pulsante */}
-          <motion.circle
-            cx="50"
-            cy="50"
-            r="40"
-            className="fill-cyan-500/20 stroke-cyan-400 stroke-2"
-            filter="url(#glow)"
-            strokeWidth="0.5"
-            animate={{
-              scale: [1, 1.1, 1],
-              opacity: [0.5, 0.8, 0.5]
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
+          {/* REMOVIDO: O Círculo Pulsante grande (r="40") que estava aqui foi apagado.
+             Mantive apenas o núcleo sólido abaixo.
+          */}
+
+           {/* Núcleo Sólido (A "Bola" central) */}
            <motion.circle
             cx="50"
             cy="50"
-            r="20"
-            className="fill-cyan-100"
+            r="15" // Reduzi um pouco (de 20 para 15) para ficar mais discreto atrás do texto
+            className="fill-cyan-100/10" // Deixei bem sutil (transparente)
             filter="url(#glow)"
           />
 
@@ -101,7 +84,6 @@ export const Hero = () => {
                 r="1"
                 className="fill-purple-400/80"
                 animate={{
-                  // Coordenadas calculadas numericamente (sem %)
                   cx: [50, 50 + 30 * Math.cos(angle * Math.PI / 180), 50 + 30 * Math.cos((angle + 180) * Math.PI / 180), 50],
                   cy: [50, 50 + 15 * Math.sin(angle * Math.PI / 180), 50 + 30 * Math.sin((angle + 180) * Math.PI / 180), 50],
                 }}
@@ -193,17 +175,14 @@ export const Hero = () => {
           >
             Transformamos Processos Caóticos em<br className="hidden md:block"/>{" "}
             
-            {/* INÍCIO DO DESTAQUE */}
+            {/* Destaque do Texto */}
             <span className="relative inline-block mt-2">
-                {/* 1. Camada de Backlight (fundo desfocado para destacar) */}
                 <span className="absolute inset-0 blur-[35px] bg-cyan-500/20 rounded-full pointer-events-none" />
                 
-                {/* 2. Texto Principal com Gradiente Brilhante + Glow (Drop Shadow) */}
                 <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-purple-400 drop-shadow-[0_0_25px_rgba(6,182,212,0.6)]">
                   Sistemas Web Inteligentes
                 </span>
 
-                {/* 3. Sublinhado animado sutil - Mais brilhante */}
                 <svg className="absolute -bottom-2 left-0 w-full h-3 z-20" viewBox="0 0 100 10" preserveAspectRatio="none">
                     <motion.path
                         d="M0 5 Q 25 10, 50 5 T 100 5"
@@ -214,8 +193,6 @@ export const Hero = () => {
                     />
                 </svg>
             </span>
-            {/* FIM DO DESTAQUE */}
-
           </motion.h1>
 
           {/* Subheadline */}
@@ -235,7 +212,6 @@ export const Hero = () => {
               href="#contato"
               className="group relative inline-flex items-center gap-3 bg-[#00a6b5] hover:bg-[#008ba3] text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-300 overflow-hidden shadow-lg shadow-[rgba(0,166,181,0.4)] hover:shadow-[rgba(0,166,181,0.6)]"
             >
-              {/* Efeito de brilho no hover do botão */}
               <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></div>
               
               <span className="relative z-10">Quero meu diagnóstico gratuito</span>
@@ -259,7 +235,7 @@ export const Hero = () => {
         </motion.div>
       </div>
 
-        {/* Indicador de Scroll (Seta para baixo) */}
+        {/* Indicador de Scroll */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: [0, 10, 0] }}
