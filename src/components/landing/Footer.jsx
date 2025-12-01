@@ -66,7 +66,7 @@ export const Footer = () => {
                 </span>
             </h2>
             <p className="text-xl text-slate-400 mb-12 max-w-2xl mx-auto leading-relaxed">
-                Sua operação pode ser 10x mais eficiente. Agende uma análise técnica de 15 minutos com nossos engenheiros.
+                Sua operação pode ser 10x mais eficiente. Agende uma análise técnica de 15 minutos com nossos técnicos.
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
