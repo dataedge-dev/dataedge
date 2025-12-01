@@ -1,0 +1,34 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Navbar } from '../components/landing/Navbar';
+import { Hero } from '../components/landing/Hero';
+import { Calculator } from '../components/landing/Calculator';
+import { Solution } from '../components/landing/Solution';
+import { Integrations } from '../components/landing/Integrations'; // <-- Mudança aqui
+import { Methodology } from '../components/landing/Methodology';
+import { Testimonials } from '../components/landing/Testimonials';
+import { FAQ } from '../components/landing/FAQ';
+import { ContactForm } from '../components/landing/ContactForm';
+import { Footer } from '../components/landing/Footer';
+---
+
+<Layout title="Automação Industrial & Logística | DataEdge">
+	<Navbar client:load />
+    
+    <main>
+		<Hero client:load />
+        
+        <Calculator client:visible />
+		<Solution client:visible />
+        
+        {/* Nova Seção de Integrações (Substitui N8nSection) */}
+        <Integrations client:visible />
+
+        <Methodology client:visible />
+        <Testimonials client:visible />
+        
+        <FAQ client:visible />
+        <ContactForm client:visible />
+        <Footer client:visible />
+	</main>
+</Layout>
